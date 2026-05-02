@@ -1628,19 +1628,36 @@ h2.animated-heading.revealed::after {
   .hero-inner,
   .hero > .container {
     flex-direction: column;
-    padding: 120px 24px 80px;
-    gap: 32px;
-    justify-content: center;
-  }
-
-  .hero-visual {
-    display: none;
+    align-items: center;
+    padding: 96px 24px 96px;
+    gap: 12px;
+    justify-content: flex-start;
+    flex: 1;
+    width: 100%;
   }
 
   .hero-text,
   .hero-content {
     max-width: 100%;
     text-align: center;
+    flex: 0 0 auto;
+  }
+
+  .hero-visual {
+    display: flex;
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: min(46vh, 400px);
+    margin-top: 8px;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 16px;
+  }
+
+  .hero-img-stack {
+    transform: scale(0.78);
+    transform-origin: center center;
+    margin: 0 auto;
   }
 
   .hero-subtitle {
@@ -1699,6 +1716,17 @@ h2.animated-heading.revealed::after {
 }
 
 @media (max-width: 480px) {
+  .hero-content-wrapper,
+  .hero-inner,
+  .hero > .container {
+    padding-top: 88px;
+    padding-bottom: 80px;
+  }
+
+  .hero-img-stack {
+    transform: scale(0.66);
+  }
+
   .portfolio-grid {
     columns: 1;
   }
