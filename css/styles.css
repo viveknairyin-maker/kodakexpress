@@ -165,10 +165,11 @@ ul, ol {
 
 .logo-main {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 24px;
+  font-size: clamp(17px, 2.2vw, 22px);
   font-weight: 700;
   color: var(--gold);
-  line-height: 1;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
 }
 
 .logo-sub {
@@ -290,124 +291,20 @@ ul, ol {
   letter-spacing: 0;
 }
 
-/* ─── 6. The Camera ─── */
-#camera-graphic {
+/* ─── 6. Hero — particles & content ─── */
+#particles-canvas {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 420px;
-  max-width: min(420px, 90vw);
-  z-index: 10;
-  pointer-events: none;
-}
-
-.camera-illustration {
-  position: relative;
-  width: 100%;
-}
-
-.camera-svg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.lens-mount {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 42%;
-  aspect-ratio: 1;
-  z-index: 5;
-  pointer-events: none;
-}
-
-.lens-glass {
-  background: radial-gradient(circle at 35% 35%,
-    #1a2035 0%,
-    #0d1420 40%,
-    #050810 100%
-  );
-  border-radius: 50%;
-  position: relative;
-  overflow: hidden;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-}
-
-.lens-ring {
-  position: absolute;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  z-index: 0;
   pointer-events: none;
-}
-
-.lens-shine {
-  position: absolute;
-  width: 90%;
-  height: 90%;
-  top: 5%;
-  left: 5%;
-  border-radius: 50%;
-  border: 1px solid transparent;
-  border-top-color: rgba(255, 255, 255, 0.12);
-  opacity: 0.15;
-  transform-origin: 50% 50%;
-  animation: lensRotate 6s linear infinite;
-  pointer-events: none;
-}
-
-.lens-aperture {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 14%;
-  height: 14%;
-  min-width: 5px;
-  min-height: 5px;
-  background: #2a2a30;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  pointer-events: none;
-}
-
-@keyframes lensRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.camera-pinned {
-  position: fixed !important;
-  bottom: 28px !important;
-  right: 28px !important;
-  left: auto !important;
-  top: auto !important;
-  width: 72px !important;
-  max-width: 72px !important;
-  z-index: 9999;
-  animation: cameraFloat 3.5s ease-in-out infinite;
-  filter: drop-shadow(0 6px 18px rgba(200, 151, 42, 0.45));
-  cursor: pointer;
-  transition: filter 0.3s ease;
-}
-
-.camera-pinned:hover {
-  filter: drop-shadow(0 6px 28px rgba(200, 151, 42, 0.8));
-}
-
-@keyframes cameraFloat {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  25% { transform: translateY(-6px) rotate(-1deg); }
-  75% { transform: translateY(-3px) rotate(1deg); }
 }
 
 /* ─── 7. Hero Section ─── */
-#hero {
+#hero,
+.hero {
   position: relative;
   width: 100%;
   min-height: 100vh;
@@ -417,12 +314,12 @@ ul, ol {
   overflow: hidden;
 }
 
-.hero-text {
+.hero-content {
   position: relative;
-  z-index: 20;
+  z-index: 2;
   padding-left: var(--container-pad);
-  max-width: 40%;
-  transition: opacity 0.2s ease;
+  padding-right: var(--container-pad);
+  max-width: min(720px, 100%);
 }
 
 .hero-eyebrow {
@@ -442,7 +339,26 @@ ul, ol {
   color: var(--white);
   line-height: 1.0;
   letter-spacing: -0.03em;
-  margin-bottom: 24px;
+  margin-bottom: 0;
+}
+
+.hero-line {
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C8972A, transparent);
+  margin: 24px 0;
+  animation: drawLine 1.4s ease forwards 1.2s;
+}
+
+@keyframes drawLine {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 120px;
+    opacity: 1;
+  }
 }
 
 .split-word {
@@ -1549,31 +1465,20 @@ h2.animated-heading.revealed::after {
     padding: 120px var(--container-pad) 80px;
   }
   
-  .hero-text {
+  .hero-content {
     max-width: 100%;
     text-align: center;
-    padding-left: 0;
-    margin-bottom: 40px;
+    padding-left: var(--container-pad);
+    margin-bottom: 0;
   }
   
   .hero-subtitle {
     margin: 0 auto;
   }
-  
-  #camera-graphic {
-    position: relative;
-    top: auto;
-    left: auto;
-    transform: none;
-    width: min(420px, 80vw);
-    max-width: 80vw;
-  }
-  
-  .camera-pinned {
-    width: 60px !important;
-    max-width: 60px !important;
-    bottom: 20px !important;
-    right: 20px !important;
+
+  .hero-line {
+    margin-left: auto;
+    margin-right: auto;
   }
   
   .about-container {
@@ -1659,12 +1564,20 @@ h2.animated-heading.revealed::after {
     scroll-behavior: auto;
   }
   
-  .camera-pinned {
+  #particles-canvas {
+    display: none;
+  }
+
+  .hero-line {
+    width: 120px !important;
+    opacity: 1 !important;
     animation: none;
   }
 
-  .lens-shine {
-    animation: none;
+  #hero .hero-title .word-inner {
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
   }
   
   .marquee-track {

@@ -66,81 +66,120 @@
   }
 
   // ═══════════════════════════════════════════
-  // 3. CAMERA SCROLL MORPH (Home page only)
+  // 3. HERO PARTICLES (Home page only)
   // ═══════════════════════════════════════════
-  function initCamera() {
-    const camera = document.getElementById('camera-graphic');
-    if (!camera) return;
-
+  function initParticles() {
+    const canvas = document.getElementById('particles-canvas');
     const hero = document.getElementById('hero');
-    if (!hero) return;
+    if (!canvas || !hero || prefersReducedMotion) return;
 
-    const mqMobile = window.matchMedia('(max-width: 768px)');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    function scrollToTopIfPinned() {
-      if (camera.classList.contains('camera-pinned')) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    const PARTICLE_COUNT = 80;
+    const particles = [];
+
+    function resizeCanvas() {
+      const w = hero.offsetWidth;
+      const h = hero.offsetHeight;
+      canvas.width = w;
+      canvas.height = h;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 1.8 + 0.3;
+        this.speedX = (Math.random() - 0.5) * 0.4;
+        this.speedY = -Math.random() * 0.5 - 0.1;
+        this.opacity = Math.random() * 0.5 + 0.1;
+        this.life = 0;
+        this.maxLife = Math.random() * 200 + 100;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life++;
+        if (this.life > this.maxLife || this.y < 0) this.reset();
+      }
+      draw() {
+        const fade =
+          this.life < 30
+            ? this.life / 30
+            : this.life > this.maxLife - 30
+              ? (this.maxLife - this.life) / 30
+              : 1;
+        ctx.save();
+        ctx.globalAlpha = this.opacity * fade;
+        ctx.fillStyle = '#C8972A';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
       }
     }
 
-    if (prefersReducedMotion) {
-      camera.classList.add('camera-pinned');
-      camera.style.pointerEvents = 'auto';
-      camera.addEventListener('click', scrollToTopIfPinned);
-      return;
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const p = new Particle();
+      p.life = Math.random() * p.maxLife;
+      particles.push(p);
     }
 
-    function applyUnpinnedLayout() {
-      if (mqMobile.matches) {
-        camera.style.position = '';
-        camera.style.left = '';
-        camera.style.top = '';
-        camera.style.transform = '';
-      } else {
-        camera.style.position = 'absolute';
-        camera.style.left = '50%';
-        camera.style.top = '50%';
-        camera.style.transform = 'translate(-50%, -50%)';
-      }
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p) => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
     }
+    animateParticles();
 
-    function onScroll() {
-      const scrollY = window.scrollY;
-      const maxScroll = 500;
-      const progress = Math.min(scrollY / maxScroll, 1);
-      const size = 420 - (420 - 72) * progress;
-
-      camera.style.height = 'auto';
-
-      const heroText = document.querySelector('.hero-text');
-      if (heroText) {
-        heroText.style.opacity = String(Math.max(0, 1 - progress * 1.5));
-      }
-
-      if (progress >= 1) {
-        camera.classList.add('camera-pinned');
-        camera.style.pointerEvents = 'auto';
-        camera.style.width = '';
-      } else {
-        camera.classList.remove('camera-pinned');
-        applyUnpinnedLayout();
-        camera.style.pointerEvents = 'none';
-        camera.style.width = size + 'px';
-      }
-    }
-
-    applyUnpinnedLayout();
-    camera.style.width = '420px';
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    mqMobile.addEventListener('change', () => {
-      if (!camera.classList.contains('camera-pinned')) {
-        applyUnpinnedLayout();
-      }
+    document.addEventListener('mousemove', (e) => {
+      const rect = hero.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      particles.forEach((p) => {
+        const dx = mx - p.x;
+        const dy = my - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          p.speedX += dx * 0.00015;
+          p.speedY += dy * 0.00015;
+        }
+      });
     });
-    onScroll();
+  }
 
-    camera.addEventListener('click', scrollToTopIfPinned);
+  // ═══════════════════════════════════════════
+  // 3b. HERO TITLE — word reveal (Home only)
+  // ═══════════════════════════════════════════
+  function initHeroTitleReveal() {
+    const heading = document.querySelector('#hero .hero-title');
+    if (!heading || heading.querySelector('.word-wrap')) return;
+    if (prefersReducedMotion) return;
+
+    const words = heading.textContent.trim().split(/\s+/);
+    heading.innerHTML = words
+      .map(
+        (word, i) =>
+          `<span class="word-wrap" style="overflow:hidden;display:inline-block;margin-right:0.25em;"><span class="word-inner" style="display:inline-block;transform:translateY(110%);opacity:0;transition:transform 0.8s cubic-bezier(0.16,1,0.3,1) ${i * 0.12}s, opacity 0.8s ease ${i * 0.12}s;">${word}</span></span>`
+      )
+      .join('');
+
+    setTimeout(() => {
+      heading.querySelectorAll('.word-inner').forEach((el) => {
+        el.style.transform = 'translateY(0)';
+        el.style.opacity = '1';
+      });
+    }, 300);
   }
 
   // ═══════════════════════════════════════════
@@ -536,11 +575,11 @@
   // INITIALIZATION ORDER
   // ═══════════════════════════════════════════
   function initAfterIntro() {
-    initCamera();
+    initParticles();
+    initHeroTitleReveal();
     initTextSplit();
-    // Trigger hero text animations
     setTimeout(() => {
-      document.querySelectorAll('.split-inner').forEach(el => {
+      document.querySelectorAll('.split-inner').forEach((el) => {
         el.classList.add('revealed');
       });
     }, 200);
