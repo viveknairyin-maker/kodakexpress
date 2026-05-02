@@ -183,6 +183,40 @@
   }
 
   // ═══════════════════════════════════════════
+  // 3c. HERO VISUAL — staggered image entrance (Home only)
+  // ═══════════════════════════════════════════
+  function initHeroVisualEntrance() {
+    const imgs = document.querySelectorAll('.hero-img');
+    if (!imgs.length || prefersReducedMotion) return;
+
+    const baseTransforms = {
+      'hero-img-1': 'rotate(-6deg)',
+      'hero-img-2': 'rotate(2deg)',
+      'hero-img-3': 'rotate(5deg)',
+    };
+
+    imgs.forEach((el, i) => {
+      const key = [...el.classList].find(
+        (c) => /^hero-img-\d$/.test(c)
+      );
+      const base = (key && baseTransforms[key]) || 'rotate(0deg)';
+
+      el.style.opacity = '0';
+      el.style.transform = `${base} translateY(30px)`;
+
+      setTimeout(() => {
+        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        el.style.opacity = '1';
+        el.style.transform = base;
+        setTimeout(() => {
+          el.style.transition = '';
+          el.style.transform = '';
+        }, 850);
+      }, 600 + i * 200);
+    });
+  }
+
+  // ═══════════════════════════════════════════
   // 4. NAVBAR SCROLL BEHAVIOR
   // ═══════════════════════════════════════════
   function initNavbar() {
@@ -577,6 +611,7 @@
   function initAfterIntro() {
     initParticles();
     initHeroTitleReveal();
+    initHeroVisualEntrance();
     initTextSplit();
     setTimeout(() => {
       document.querySelectorAll('.split-inner').forEach((el) => {

@@ -310,16 +310,177 @@ ul, ol {
   min-height: 100vh;
   background: var(--black);
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   overflow: hidden;
 }
 
-.hero-content {
+.hero-content-wrapper,
+.hero-inner,
+.hero > .container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 60px;
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  box-sizing: border-box;
+  min-height: 0;
+  flex: 1;
+  padding: clamp(96px, 14vh, 140px) 80px clamp(80px, 10vh, 120px);
   position: relative;
   z-index: 2;
-  padding-left: var(--container-pad);
-  padding-right: var(--container-pad);
-  max-width: min(720px, 100%);
+}
+
+.hero-text,
+.hero-content {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 2;
+  padding-left: 0;
+  padding-right: 0;
+  max-width: min(620px, 100%);
+}
+
+.hero-visual {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 440px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  flex: 1;
+}
+
+.hero-img-stack {
+  position: relative;
+  width: 340px;
+  height: 440px;
+}
+
+.hero-img {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.hero-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.hero-img-1 {
+  width: 220px;
+  height: 290px;
+  top: 60px;
+  left: 10px;
+  transform: rotate(-6deg);
+  z-index: 1;
+  animation: floatImg1 5s ease-in-out infinite;
+  border: 1px solid rgba(200, 151, 42, 0.2);
+}
+
+.hero-img-2 {
+  width: 200px;
+  height: 260px;
+  top: 40px;
+  left: 90px;
+  transform: rotate(2deg);
+  z-index: 3;
+  animation: floatImg2 6s ease-in-out infinite;
+  border: 1px solid rgba(200, 151, 42, 0.4);
+}
+
+.hero-img-3 {
+  width: 150px;
+  height: 150px;
+  bottom: 20px;
+  right: 0;
+  transform: rotate(5deg);
+  z-index: 2;
+  animation: floatImg3 4.5s ease-in-out infinite;
+  border: 2px solid rgba(200, 151, 42, 0.6);
+}
+
+@keyframes floatImg1 {
+  0%, 100% { transform: rotate(-6deg) translateY(0px); }
+  50% { transform: rotate(-6deg) translateY(-12px); }
+}
+
+@keyframes floatImg2 {
+  0%, 100% { transform: rotate(2deg) translateY(0px); }
+  50% { transform: rotate(2deg) translateY(-8px); }
+}
+
+@keyframes floatImg3 {
+  0%, 100% { transform: rotate(5deg) translateY(0px); }
+  50% { transform: rotate(5deg) translateY(-10px); }
+}
+
+.hero-img:hover {
+  z-index: 10 !important;
+  transition: transform 0.3s ease, z-index 0s;
+  animation-play-state: paused;
+}
+
+.hero-img-1:hover {
+  transform: rotate(-6deg) translateY(-16px) scale(1.04);
+}
+
+.hero-img-2:hover {
+  transform: rotate(2deg) translateY(-16px) scale(1.04);
+}
+
+.hero-img-3:hover {
+  transform: rotate(5deg) translateY(-16px) scale(1.04);
+}
+
+.hero-img-stack::before {
+  content: '';
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border: 1px solid rgba(200, 151, 42, 0.15);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: ringPulse 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.hero-img-stack::after {
+  content: '';
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  border: 1px solid rgba(200, 151, 42, 0.07);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: ringPulse 4s ease-in-out infinite 0.5s;
+  pointer-events: none;
+}
+
+@keyframes ringPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.04);
+    opacity: 1;
+  }
 }
 
 .hero-eyebrow {
@@ -1460,18 +1621,28 @@ h2.animated-heading.revealed::after {
   }
   
   #hero {
-    flex-direction: column;
-    justify-content: center;
-    padding: 120px var(--container-pad) 80px;
+    padding: 0;
   }
-  
+
+  .hero-content-wrapper,
+  .hero-inner,
+  .hero > .container {
+    flex-direction: column;
+    padding: 120px 24px 80px;
+    gap: 32px;
+    justify-content: center;
+  }
+
+  .hero-visual {
+    display: none;
+  }
+
+  .hero-text,
   .hero-content {
     max-width: 100%;
     text-align: center;
-    padding-left: var(--container-pad);
-    margin-bottom: 0;
   }
-  
+
   .hero-subtitle {
     margin: 0 auto;
   }
@@ -1566,6 +1737,16 @@ h2.animated-heading.revealed::after {
   
   #particles-canvas {
     display: none;
+  }
+
+  .hero-img {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .hero-img-stack::before,
+  .hero-img-stack::after {
+    animation: none !important;
   }
 
   .hero-line {
